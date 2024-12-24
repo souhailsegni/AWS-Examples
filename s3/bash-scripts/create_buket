@@ -1,0 +1,26 @@
+
+#!/bin/bash
+
+# Check if AWS CLI is installed
+if ! command -v aws &> /dev/null
+then
+    echo "AWS CLI could not be found. Please install it first."
+    exit 1
+fi
+
+# Prompt for the bucket name and AWS region
+read -p "Enter the bucket name: " BUCKET_NAME
+read -p "Enter the AWS region (e.g., us-east-1): " AWS_REGION
+
+# Create the S3 bucket
+aws s3api create-bucket \
+    --bucket "$BUCKET_NAME" \
+    --region "$AWS_REGION" \
+    --create-bucket-configuration LocationConstraint="$AWS_REGION"
+
+# Check if the bucket creation was successful
+if [ $? -eq 0 ]; then
+    echo "Bucket '$BUCKET_NAME' created successfully in region '$AWS_REGION'."
+else
+    echo "Failed to create the bucket. Please check your configuration and try again."
+fi

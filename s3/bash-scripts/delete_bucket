@@ -1,0 +1,53 @@
+#!/bin/bash
+###############################################################################
+# function errecho
+#
+# This function outputs everything sent to it to STDERR (standard error output).
+###############################################################################
+function errecho() {
+  printf "%s\n" "$*" 1>&2
+}
+
+###############################################################################
+# function delete_item_in_bucket
+#
+# This function deletes the specified file from the specified bucket.
+#
+# Parameters:
+#       $1 - The name of the bucket.
+#       $2 - The key (file name) in the bucket to delete.
+
+# Returns:
+#       0 - If successful.
+#       1 - If it fails.
+###############################################################################
+function delete_item_in_bucket() {
+  local bucket_name=souhailbucket1900
+  local key=mypic
+  local response
+
+  # Check if both parameters are provided
+  if [ -z "$bucket_name" ] || [ -z "$key" ]; then
+    errecho "ERROR: Bucket name and key must be provided."
+    return 1
+  fi
+
+  # Perform the delete operation
+  response=$(aws s3api delete-object \
+    --bucket "$bucket_name" \
+    --key "$key" \
+    --output json \
+    --debug)
+
+  # Check the response for success
+  if echo "$response" | grep -q '"DeleteMarker": true'; then
+    echo "Successfully deleted '$key' from bucket '$bucket_name'."
+    return 0
+  else
+    errecho "ERROR: AWS reports s3api delete-object operation failed.\n$response"
+    return 1
+  fi
+}
+
+# Example usage
+# delete_item_in_bucket "your-bucket-name" "your-file-key"
