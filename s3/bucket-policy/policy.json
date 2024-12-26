@@ -1,0 +1,20 @@
+{
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "arn:aws:iam::891612568108:user/Segni"
+        },
+        "Action": [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        "Resource": [
+          "arn:aws:s3:::myfunnybucket-100",
+          "arn:aws:s3:::myfunnybucket-100/*"
+        ]
+      }
+    ]
+  }
+  
