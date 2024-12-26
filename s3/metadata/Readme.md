@@ -11,3 +11,7 @@ aws s3api put-object \
 # getting the metadeta
 aws s3api head-object --bucket myfunnybucket-100 --key hello.txt
 
+# clean up
+aws s3 rm s3://myfunnybucket-100 --recursive
+
+aws s3 rb s3://myfunnybucket-100
