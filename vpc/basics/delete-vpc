@@ -1,10 +1,50 @@
 #!/bin/bash
-# Step 1: Get VPC ID
-VPC_ID=vpc-0b92df08827ec4964
+# Step 1: Define resource names
+VPC_NAME="MyVPC"
+SUBNET_NAME="MySubnet"
+IGW_NAME="MyInternetGateway"
+RTB_NAME="MyRouteTable"
 
-# Step 2: Delete NAT Gateway
-NAT_GW_ID=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query "NatGateways[0].NatGatewayId" --output text)
-if [ "$NAT_GW_ID" != "None" ]; then
-  aws ec2 delete-nat-gateway --nat-gateway-id $NAT_GW_ID
-  echo "Deleted NAT Gateway: $NAT_GW_ID"
-fi 
+# Step 2: Find and delete Subnet
+SUBNET_ID=$(aws ec2 describe-subnets --filters "Name=tag:Name,Values=$SUBNET_NAME" --query "Subnets[0].SubnetId" --output text)
+
+if [ "$SUBNET_ID" != "None" ]; then
+  echo "Deleting Subnet: $SUBNET_ID"
+  aws ec2 delete-subnet --subnet-id $SUBNET_ID
+else
+  echo "Subnet $SUBNET_NAME does not exist."
+fi
+
+# Step 3: Find and detach/delete Internet Gateway
+IGW_ID=$(aws ec2 describe-internet-gateways --filters "Name=tag:Name,Values=$IGW_NAME" --query "InternetGateways[0].InternetGatewayId" --output text)
+
+if [ "$IGW_ID" != "None" ]; then
+  echo "Detaching and Deleting Internet Gateway: $IGW_ID"
+  VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query "Vpcs[0].VpcId" --output text)
+  aws ec2 detach-internet-gateway --internet-gateway-id $IGW_ID --vpc-id $VPC_ID
+  aws ec2 delete-internet-gateway --internet-gateway-id $IGW_ID
+else
+  echo "Internet Gateway $IGW_NAME does not exist."
+fi
+
+# Step 4: Find and delete Route Table
+RTB_ID=$(aws ec2 describe-route-tables --filters "Name=tag:Name,Values=$RTB_NAME" --query "RouteTables[0].RouteTableId" --output text)
+
+if [ "$RTB_ID" != "None" ]; then
+  echo "Deleting Route Table: $RTB_ID"
+  aws ec2 delete-route-table --route-table-id $RTB_ID
+else
+  echo "Route Table $RTB_NAME does not exist."
+fi
+
+# Step 5: Find and delete VPC
+VPC_ID=$(aws ec2 describe-vpcs --filters "Name=tag:Name,Values=$VPC_NAME" --query "Vpcs[0].VpcId" --output text)
+
+if [ "$VPC_ID" != "None" ]; then
+  echo "Deleting VPC: $VPC_ID"
+  aws ec2 delete-vpc --vpc-id $VPC_ID
+else
+  echo "VPC $VPC_NAME does not exist."
+fi
+
+echo "VPC deletion complete!"
