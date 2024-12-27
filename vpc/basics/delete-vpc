@@ -1,0 +1,10 @@
+#!/bin/bash
+# Step 1: Get VPC ID
+VPC_ID=vpc-0b92df08827ec4964
+
+# Step 2: Delete NAT Gateway
+NAT_GW_ID=$(aws ec2 describe-nat-gateways --filter "Name=vpc-id,Values=$VPC_ID" --query "NatGateways[0].NatGatewayId" --output text)
+if [ "$NAT_GW_ID" != "None" ]; then
+  aws ec2 delete-nat-gateway --nat-gateway-id $NAT_GW_ID
+  echo "Deleted NAT Gateway: $NAT_GW_ID"
+fi 
