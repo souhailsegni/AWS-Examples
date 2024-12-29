@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: CloudFormation template to create an EC2 Launch Template.
+
+Resources:
+  EC2LaunchTemplate:
+    Type: "AWS::EC2::LaunchTemplate"
+    Properties:
+      LaunchTemplateName: "SouhailLaunchTemplate"
+      LaunchTemplateData:
+        ImageId: "ami-0a422d70f727fe93e" # Replace with your desired AMI ID
+        InstanceType: "t2.micro"        # Replace with desired instance type
+        KeyName: "mykeypair"     # Replace with your key pair name
+        SecurityGroupIds:
+          - "sg-0edff9f0a809f0bd3"     # Replace with your Security Group ID
+        TagSpecifications:
+          - ResourceType: "instance"
+            Tags:
+              - Key: "Name"
+                Value: "Souhail-Instance"
+        #UserData: !Base64 |
+          #!/bin/bash
+          #echo "Hello, Souhail! This instance is configured from a launch template." > /var/www/html/index.html
