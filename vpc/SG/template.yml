@@ -11,11 +11,11 @@ Parameters:
     Description: VPC ID where resources will be deployed
   ImageId:
     Type: String
-    Default: ami-003c24b59bb839e19
+    Default: ami-008d05461f83df5b1
     Description: AMI ID for the EC2 instance
   SubnetId:
     Type: String
-    Default: 
+    Default: subnet-0d92d4ff11754d6e2
     Description: Subnet ID where the EC2 instance will be launched
 Resources:
   SSMRole:

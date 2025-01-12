@@ -31,3 +31,6 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
+aws ec2 describe-images --owners amazon --filters "Name=name,Values=amzn2-ami-hvm-*" --region eu-west-1
+
+aws ec2 describe-route-tables --filters "Name=association.subnet-id,Values=subnet-0d92d4ff11754d6e2"
